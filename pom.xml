@@ -1,57 +1,175 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.jcuda</groupId>
-        <artifactId>jcuda-parent</artifactId>
-        <version>0.7.5</version>
-        <relativePath>../../jcuda-common/JCudaParentPOM/pom.xml</relativePath>
-    </parent>
-
+    <groupId>org.jcuda</groupId>
     <artifactId>jcuda</artifactId>
+    <version>7.5.0</version>
 
     <dependencies>
-    	<dependency>
-    		<groupId>junit</groupId>
-    		<artifactId>junit</artifactId>
-    		<version>4.11</version>
-    		<scope>test</scope>
-    	</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
+    <properties>
+        <platform>${os.name}-${os.arch}</platform>
+    </properties>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.9.1</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <executions>
                     <execution>
-                        <id>attach-artifacts</id>
+                        <id>${platform}</id>
                         <phase>package</phase>
                         <goals>
-                            <goal>attach-artifact</goal>
+                            <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <artifacts>
-                                <artifact>
-                                    <file>${jcuda.libDir}/JCudaRuntime-${jcuda.os}-${jcuda.arch}.${jcuda.ext}</file>
-                                    <type>${jcuda.ext}</type>
-                                    <classifier>JCudaRuntime-nativeLibrary</classifier>
-                                </artifact>
-                                <artifact>
-                                    <file>${jcuda.libDir}/JCudaDriver-${jcuda.os}-${jcuda.arch}.${jcuda.ext}</file>
-                                    <type>${jcuda.ext}</type>
-                                    <classifier>JCudaDriver-nativeLibrary</classifier>
-                                </artifact>
-                            </artifacts>
+                            <classifier>${platform}</classifier>
+                            <skipIfEmpty>true</skipIfEmpty>
+                            <classesDirectory>target/native</classesDirectory>
+                            <includes>
+                                <include>lib/*.dylib</include>
+                            </includes>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>target/native</additionalClasspathElement>
+                    </additionalClasspathElements>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>platform-dependency-default</id>
+            <activation>
+                <file>
+                    <missing>${user.dir}/isRoot.txt</missing>
+                </file>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <classifier>${platform}</classifier>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>linux</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                </os>
+            </activation>
+            <properties>
+                <os.name>linux</os.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>macosx</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                </os>
+            </activation>
+            <properties>
+                <os.name>macosx</os.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <os.name>windows</os.name>
+            </properties>
+        </profile>
+        <profile>
+            <id>i386</id>
+            <activation>
+                <os>
+                    <arch>i386</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>x86</os.arch>
+            </properties>
+        </profile>
+        <profile>
+            <id>i486</id>
+            <activation>
+                <os>
+                    <arch>i486</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>x86</os.arch>
+            </properties>
+        </profile>
+        <profile>
+            <id>i586</id>
+            <activation>
+                <os>
+                    <arch>i586</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>x86</os.arch>
+            </properties>
+        </profile>
+        <profile>
+            <id>i686</id>
+            <activation>
+                <os>
+                    <arch>i686</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>x86</os.arch>
+            </properties>
+        </profile>
+        <profile>
+            <id>amd64</id>
+            <activation>
+                <os>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>x86_64</os.arch>
+            </properties>
+        </profile>
+        <profile>
+            <id>x86-64</id>
+            <activation>
+                <os>
+                    <arch>x86-64</arch>
+                </os>
+            </activation>
+            <properties>
+                <os.arch>x86_64</os.arch>
+            </properties>
+        </profile>
+    </profiles>
 </project>
