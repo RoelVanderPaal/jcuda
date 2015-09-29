@@ -22,6 +22,38 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.4.0</version>
+               <executions>
+                    <execution>
+                        <id>cmake</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <executable>cmake</executable>
+                            <workingDirectory>${project.build.directory}/native</workingDirectory>
+                            <arguments>
+                                <argument>../..</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>make</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <executable>make</executable>
+                            <workingDirectory>${project.build.directory}/native</workingDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.4</version>
                 <executions>
@@ -34,7 +66,7 @@
                         <configuration>
                             <classifier>${platform}</classifier>
                             <skipIfEmpty>true</skipIfEmpty>
-                            <classesDirectory>target/native</classesDirectory>
+                            <classesDirectory>${project.build.directory}/native</classesDirectory>
                             <includes>
                                 <include>lib/*.dylib</include>
                             </includes>
@@ -48,7 +80,7 @@
                 <version>2.18.1</version>
                 <configuration>
                     <additionalClasspathElements>
-                        <additionalClasspathElement>target/native</additionalClasspathElement>
+                        <additionalClasspathElement>${project.build.directory}/native</additionalClasspathElement>
                     </additionalClasspathElements>
                 </configuration>
             </plugin>
