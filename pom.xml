@@ -34,7 +34,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.4.0</version>
-               <executions>
+                <executions>
                     <execution>
                         <id>cmake</id>
                         <goals>
@@ -56,8 +56,14 @@
                         </goals>
                         <phase>compile</phase>
                         <configuration>
-                            <executable>make</executable>
+                            <executable>cmake</executable>
                             <workingDirectory>${project.build.directory}/native</workingDirectory>
+                            <arguments>
+                                <argument>--build</argument>
+                                <argument>${project.build.directory}/native</argument>
+                                <argument>--config</argument>
+                                <argument>Release</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>
